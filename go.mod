@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/iand/logfmtr v0.2.1 // indirect
 	github.com/yuin/goldmark v1.4.12 // indirect
 	golang.org/x/net v0.0.0-20220526153639-5463443f8c37 // indirect
