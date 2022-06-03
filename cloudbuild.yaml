@@ -1,24 +1,29 @@
 steps:
   - id: build-push
-    name: 'gcr.io/cloud-builders/docker'
-    entrypoint: /bin/sh
+    name: 'gcr.io/kaniko-project/executor'
     args:
-      - -c
-      - |
-        set -ex
+      - '--cache'
+      - '--cache-ttl=168h'
+      - '--context=.'
+      - '--destination=${_REGISTRY}/${_APP}:${SHORT_SHA}'
+      - '--destination=${_REGISTRY}/${_APP}:latest'
+      - '--image-name-with-digest-file=.image.txt'
+      - '--reproducible'
+      - '--single-snapshot'
+      - '--use-new-run'
+      - '--ignore-var-run'
 
-        docker build -t ${_REGISTRY}/${_APP}:latest .
-        docker push ${_REGISTRY}/${_APP}:latest
-
-  - id: sign-latest
+  - id: sign
     name: 'gcr.io/projectsigstore/cosign'
+    entrypoint: sh
     env:
       - 'TUF_ROOT=/tmp' # cosign tries to create $HOME/.sigstore
       - 'COSIGN_EXPERIMENTAL=1'
       - 'GOOGLE_SERVICE_ACCOUNT_NAME=cosign-signer@com-seankhliao.iam.gserviceaccount.com'
     args:
-      - 'sign'
-      - '${_REGISTRY}/${_APP}:latest'
+      - '-c'
+      - 'cosign sign $(head -n 1 .image.txt)'
+
 substitutions:
-  _APP: paste
-  _REGISTRY: us-central1-docker.pkg.dev/com-seankhliao/run
+  _APP: 'paste'
+  _REGISTRY: 'us-central1-docker.pkg.dev/com-seankhliao/run'
