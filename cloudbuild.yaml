@@ -24,6 +24,15 @@ steps:
       - '-c'
       - 'cosign sign $(head -n 1 .image.txt)'
 
+
+  - id: deploy
+    name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
+    entrypoint: sh
+    args:
+      - '-c'
+      - 'gcloud run deploy ${_RUN} --image $(head -n 1 .image.txt) --region us-central1 --max-instances 1'
+
 substitutions:
   _APP: 'paste'
   _REGISTRY: 'us-central1-docker.pkg.dev/com-seankhliao/run'
+  _RUN: 'paste-liao-dev'
