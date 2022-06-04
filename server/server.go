@@ -9,11 +9,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"path"
-	"path/filepath"
 	"time"
 
+	"cloud.google.com/go/storage"
 	"github.com/go-logr/logr"
 	"go.seankhliao.com/svcrunner"
 	"go.seankhliao.com/svcrunner/envflag"
@@ -25,9 +24,10 @@ import (
 var indexRaw []byte
 
 type Server struct {
-	dir   string
-	index []byte
-	log   logr.Logger
+	bucket string
+	bkt    *storage.BucketHandle
+	index  []byte
+	log    logr.Logger
 }
 
 func New(hs *http.Server) *Server {
@@ -42,15 +42,19 @@ func New(hs *http.Server) *Server {
 }
 
 func (s *Server) Register(c *envflag.Config) {
-	c.StringVar(&s.dir, "paste.dir", "/data", "storage directory")
+	c.StringVar(&s.bucket, "paste.bucket", "", "storage bucket")
 }
 
 func (s *Server) Init(ctx context.Context, t svcrunner.Tools) error {
 	s.log = t.Log.WithName("paste")
 
-	render := webstyle.NewRenderer(webstyle.TemplateCompact)
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		return fmt.Errorf("create storage client: %w", err)
+	}
+	s.bkt = client.Bucket(s.bucket)
 
-	var err error
+	render := webstyle.NewRenderer(webstyle.TemplateCompact)
 	s.index, err = render.RenderBytes(indexRaw, webstyle.Data{})
 	if err != nil {
 		return fmt.Errorf("render index: %w", err)
@@ -67,10 +71,24 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) lookup(rw http.ResponseWriter, r *http.Request) {
-	http.ServeFile(rw, r, filepath.Join(s.dir, r.URL.Path))
+	ctx := r.Context()
+	obj := s.bkt.Object(r.URL.Path[1:])
+	or, err := obj.NewReader(ctx)
+	if err != nil {
+		s.log.Error(err, "get object reader")
+		http.Error(rw, "not found", http.StatusNotFound)
+		return
+	}
+	defer or.Close()
+	_, err = io.Copy(rw, or)
+	if err != nil {
+		s.log.Error(err, "copy from bucket")
+	}
 }
 
 func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	if r.Method != http.MethodPost {
 		http.Error(rw, "POST only", http.StatusMethodNotAllowed)
 		return
@@ -108,11 +126,14 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 	sum2 := base64.URLEncoding.EncodeToString(sum[:])
 
 	key := path.Join("p", sum2[:8])
-	err := os.WriteFile(filepath.Join(s.dir, key), val, 0o644)
+
+	obj := s.bkt.Object(key)
+	ow := obj.NewWriter(ctx)
+	defer ow.Close()
+	_, err := io.Copy(ow, bytes.NewReader(val))
 	if err != nil {
-		s.log.Error(err, "write file", "file", key)
+		s.log.Error(err, "write to object", "key", key)
 		http.Error(rw, "write", http.StatusInternalServerError)
-		return
 	}
 
 	fmt.Fprintf(rw, "https://%s/%s\n", r.Host, key)
