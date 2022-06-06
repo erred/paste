@@ -5,7 +5,7 @@ go 1.19
 require (
 	cloud.google.com/go/storage v1.22.1
 	github.com/go-logr/logr v1.2.3
-	go.seankhliao.com/svcrunner v0.1.5
+	go.seankhliao.com/svcrunner v0.1.6
 	go.seankhliao.com/webstyle v0.5.0
 )
 
