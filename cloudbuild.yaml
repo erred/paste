@@ -22,7 +22,7 @@ steps:
       - 'GOOGLE_SERVICE_ACCOUNT_NAME=cosign-signer@com-seankhliao.iam.gserviceaccount.com'
     args:
       - '-c'
-      - 'cosign sign $(head -n 1 .image.txt)'
+      - 'cosign sign --force $(head -n 1 .image.txt)'
 
 
   - id: deploy

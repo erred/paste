@@ -19,7 +19,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.4.0 // indirect
 	github.com/googleapis/go-type-adapters v1.0.0 // indirect
-	github.com/iand/logfmtr v0.2.1 // indirect
 	github.com/yuin/goldmark v1.4.12 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.0.0-20220531201128-c960675eff93 // indirect
