@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	_ "embed"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -72,69 +73,88 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 func (s *Server) lookup(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	obj := s.bkt.Object(r.URL.Path[1:])
+	objName := r.URL.Path[1:]
+	log := s.log.WithValues("handler", "lookup", "bucket", s.bucket, "object", objName)
+
+	obj := s.bkt.Object(objName)
 	or, err := obj.NewReader(ctx)
-	if err != nil {
-		s.log.Error(err, "get object reader")
+	if errors.Is(err, storage.ErrObjectNotExist) {
 		http.Error(rw, "not found", http.StatusNotFound)
+		log.V(1).Info("object not found", "bucket", s.bucket, "obj", objName)
+		return
+	} else if err != nil {
+		http.Error(rw, "get object", http.StatusNotFound)
+		log.Error(err, "get object reader", "bucket", s.bucket, "obj", objName)
 		return
 	}
 	defer or.Close()
 	_, err = io.Copy(rw, or)
 	if err != nil {
-		s.log.Error(err, "copy from bucket")
+		log.Error(err, "copy from bucket")
 	}
+	log.V(1).Info("served object", "bucket", s.bucket, "obj", objName)
 }
 
 func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	log := s.log.WithValues("handler", "upload")
 
+	// request validation
 	if r.Method != http.MethodPost {
 		http.Error(rw, "POST only", http.StatusMethodNotAllowed)
+		log.V(1).Info("invalid method", "method", r.Method)
 		return
 	}
 	if r.URL.Path != "/paste/" {
 		http.Error(rw, "not found", http.StatusNotFound)
+		log.V(1).Info("invalid path", "path", r.URL.Path)
 		return
 	}
+
+	// extract upload data
 	val := []byte(r.FormValue("paste"))
+	uploadSource := "form"
 	if len(val) == 0 {
 		err := r.ParseMultipartForm(1 << 22) // 4M
 		if err != nil {
-			s.log.Error(err, "parse multipart form")
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
+			log.Error(err, "parse multipart form")
 			return
 		}
 		mpf, _, err := r.FormFile("upload")
 		if err != nil {
-			s.log.Error(err, "get form file")
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
+			log.Error(err, "get form file")
 			return
 		}
 		defer mpf.Close()
 		var buf bytes.Buffer
 		_, err = io.Copy(&buf, mpf)
 		if err != nil {
-			s.log.Error(err, "read form file")
 			http.Error(rw, "read", http.StatusInternalServerError)
+			log.Error(err, "read form file")
 			return
 		}
 		val = buf.Bytes()
+		uploadSource = "file"
 	}
 
 	sum := sha256.Sum256(val)
 	sum2 := base64.URLEncoding.EncodeToString(sum[:])
-
 	key := path.Join("p", sum2[:8])
+
+	log = log.WithValues("source", uploadSource, "size", len(val), "key", key)
 
 	obj := s.bkt.Object(key)
 	ow := obj.NewWriter(ctx)
 	defer ow.Close()
+
 	_, err := io.Copy(ow, bytes.NewReader(val))
 	if err != nil {
-		s.log.Error(err, "write to object", "key", key)
 		http.Error(rw, "write", http.StatusInternalServerError)
+		log.Error(err, "uploado object")
 	}
 
 	fmt.Fprintf(rw, "https://%s/%s\n", r.Host, key)
+	log.V(1).Info("uploaded object")
 }
