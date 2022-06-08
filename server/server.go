@@ -77,23 +77,35 @@ func (s *Server) lookup(rw http.ResponseWriter, r *http.Request) {
 	objName := r.URL.Path[1:]
 	log := s.log.WithValues("handler", "lookup", "bucket", s.bucket, "object", objName)
 
+	for _, etag := range r.Header.Values("if-none-match") {
+		if etag == objName {
+			rw.WriteHeader(http.StatusNotModified)
+			log.V(1).Info("etag matched")
+			return
+		}
+	}
+
 	obj := s.bkt.Object(objName)
 	or, err := obj.NewReader(ctx)
 	if errors.Is(err, storage.ErrObjectNotExist) {
 		http.Error(rw, "not found", http.StatusNotFound)
-		log.V(1).Info("object not found", "bucket", s.bucket, "obj", objName)
+		log.V(1).Info("object not found")
 		return
 	} else if err != nil {
 		http.Error(rw, "get object", http.StatusNotFound)
-		log.Error(err, "get object reader", "bucket", s.bucket, "obj", objName)
+		log.Error(err, "get object reader")
 		return
 	}
 	defer or.Close()
+
+	rw.Header().Set("cache-control", "max-age=31536000") // 365 days
+	rw.Header().Set("etag", objName)
+
 	_, err = io.Copy(rw, or)
 	if err != nil {
 		log.Error(err, "copy from bucket")
 	}
-	log.V(1).Info("served object", "bucket", s.bucket, "obj", objName)
+	log.V(1).Info("served object")
 }
 
 func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
@@ -161,7 +173,7 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 	_, err := io.Copy(ow, bytes.NewReader(val))
 	if err != nil {
 		http.Error(rw, "write", http.StatusInternalServerError)
-		log.Error(err, "uploado object")
+		log.Error(err, "upload object")
 	}
 
 	fmt.Fprintf(rw, "https://%s/%s\n", r.Host, key)
