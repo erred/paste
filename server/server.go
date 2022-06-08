@@ -111,10 +111,14 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// extract upload data
-	val := []byte(r.FormValue("paste"))
-	uploadSource := "form"
-	if len(val) == 0 {
+	var val []byte
+	var uploadSource string
+	ct := r.Header.Get("content-type")
+	switch ct {
+	case "application/x-www-form-urlencoded":
+		val = []byte(r.FormValue("paste"))
+		uploadSource = "form"
+	case "multipart/form-data":
 		err := r.ParseMultipartForm(1 << 22) // 4M
 		if err != nil {
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
@@ -137,6 +141,10 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 		}
 		val = buf.Bytes()
 		uploadSource = "file"
+	default:
+		http.Error(rw, "unknown content type", http.StatusBadRequest)
+		log.Error(errors.New("unhandled content type"), "unknown upload", "content_type", ct)
+		return
 	}
 
 	sum := sha256.Sum256(val)
