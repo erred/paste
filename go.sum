@@ -222,6 +222,10 @@ go.seankhliao.com/svcrunner v0.1.6 h1:CGHV0jFToInAOnbm4SjVfea/KClZyRuq0DfzF/FplO
 go.seankhliao.com/svcrunner v0.1.6/go.mod h1:kAaQKc055f8e1Ld8ou3CARUvYQaecreX9SSiukQly84=
 go.seankhliao.com/svcrunner v0.1.7 h1:jqecZyQtm23tROpEn3I8z7+AWQmOgEawL9OyGGPhjmQ=
 go.seankhliao.com/svcrunner v0.1.7/go.mod h1:VvHUf1nWoIOfqt5bJeiZ4Mk2aSxL8+owiAFZWspfuAs=
+go.seankhliao.com/svcrunner v0.1.8 h1:5O3kCYXhkUex8UJZ6K1nCCLa8jeIJWsCB+VJhf/x8hg=
+go.seankhliao.com/svcrunner v0.1.8/go.mod h1:VvHUf1nWoIOfqt5bJeiZ4Mk2aSxL8+owiAFZWspfuAs=
+go.seankhliao.com/svcrunner v0.1.9 h1:4MTmv/5N8QSLJWVPGVV66IH/xnANH+YlrwKnfeMe3dU=
+go.seankhliao.com/svcrunner v0.1.9/go.mod h1:VvHUf1nWoIOfqt5bJeiZ4Mk2aSxL8+owiAFZWspfuAs=
 go.seankhliao.com/webstyle v0.5.0 h1:/0kH4xPiHEqNcgL4YvKYAi2P9rdziReLK4bn9Ea5kbo=
 go.seankhliao.com/webstyle v0.5.0/go.mod h1:w6xuDEA1PA+MNe5ePY6PuFVuZJqTCM8q6rS/KYHQgks=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=

@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"path"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -114,11 +115,11 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 	var val []byte
 	var uploadSource string
 	ct := r.Header.Get("content-type")
-	switch ct {
-	case "application/x-www-form-urlencoded":
+	switch {
+	case strings.HasPrefix(ct, "application/x-www-form-urlencoded"):
 		val = []byte(r.FormValue("paste"))
 		uploadSource = "form"
-	case "multipart/form-data":
+	case strings.HasPrefix(ct, "multipart/form-data"):
 		err := r.ParseMultipartForm(1 << 22) // 4M
 		if err != nil {
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
