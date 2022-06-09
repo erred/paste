@@ -16,6 +16,8 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/go-logr/logr"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"go.seankhliao.com/svcrunner"
 	"go.seankhliao.com/svcrunner/envflag"
 	"go.seankhliao.com/webstyle"
@@ -29,7 +31,9 @@ type Server struct {
 	bucket string
 	bkt    *storage.BucketHandle
 	index  []byte
-	log    logr.Logger
+
+	log   logr.Logger
+	trace trace.Tracer
 }
 
 func New(hs *http.Server) *Server {
@@ -49,6 +53,7 @@ func (s *Server) Register(c *envflag.Config) {
 
 func (s *Server) Init(ctx context.Context, t svcrunner.Tools) error {
 	s.log = t.Log.WithName("paste")
+	s.trace = otel.Tracer("paste")
 
 	client, err := storage.NewClient(ctx)
 	if err != nil {
@@ -65,6 +70,9 @@ func (s *Server) Init(ctx context.Context, t svcrunner.Tools) error {
 }
 
 func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	_, span := s.trace.Start(r.Context(), "index")
+	defer span.End()
+
 	if r.URL.Path != "/" {
 		http.Redirect(rw, r, "/", http.StatusFound)
 		return
@@ -73,9 +81,10 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) lookup(rw http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
 	objName := r.URL.Path[1:]
 	log := s.log.WithValues("handler", "lookup", "bucket", s.bucket, "object", objName)
+	ctx, span := s.trace.Start(r.Context(), "lookup")
+	defer span.End()
 
 	for _, etag := range r.Header.Values("if-none-match") {
 		if etag == objName {
@@ -109,8 +118,9 @@ func (s *Server) lookup(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
 	log := s.log.WithValues("handler", "upload")
+	ctx, span := s.trace.Start(r.Context(), "upload")
+	defer span.End()
 
 	// request validation
 	if r.Method != http.MethodPost {
@@ -165,6 +175,9 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 	key := path.Join("p", sum2[:8])
 
 	log = log.WithValues("source", uploadSource, "size", len(val), "key", key)
+
+	ctx, span = s.trace.Start(ctx, "write-object")
+	defer span.End()
 
 	obj := s.bkt.Object(key)
 	ow := obj.NewWriter(ctx)
