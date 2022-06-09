@@ -89,7 +89,7 @@ func (s *Server) lookup(rw http.ResponseWriter, r *http.Request) {
 	for _, etag := range r.Header.Values("if-none-match") {
 		if etag == objName {
 			rw.WriteHeader(http.StatusNotModified)
-			log.V(1).Info("etag matched")
+			log.V(1).Info("etag matched", "ctx", ctx, "http_request", r)
 			return
 		}
 	}
@@ -98,11 +98,11 @@ func (s *Server) lookup(rw http.ResponseWriter, r *http.Request) {
 	or, err := obj.NewReader(ctx)
 	if errors.Is(err, storage.ErrObjectNotExist) {
 		http.Error(rw, "not found", http.StatusNotFound)
-		log.V(1).Info("object not found")
+		log.V(1).Info("object not found", "ctx", ctx, "http_request", r)
 		return
 	} else if err != nil {
 		http.Error(rw, "get object", http.StatusNotFound)
-		log.Error(err, "get object reader")
+		log.Error(err, "get object reader", "ctx", ctx, "http_request", r)
 		return
 	}
 	defer or.Close()
@@ -112,9 +112,9 @@ func (s *Server) lookup(rw http.ResponseWriter, r *http.Request) {
 
 	_, err = io.Copy(rw, or)
 	if err != nil {
-		log.Error(err, "copy from bucket")
+		log.Error(err, "copy from bucket", "ctx", ctx, "http_request", r)
 	}
-	log.V(1).Info("served object")
+	log.V(1).Info("served object", "ctx", ctx, "http_request", r)
 }
 
 func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
@@ -125,12 +125,12 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 	// request validation
 	if r.Method != http.MethodPost {
 		http.Error(rw, "POST only", http.StatusMethodNotAllowed)
-		log.V(1).Info("invalid method", "method", r.Method)
+		log.V(1).Info("invalid method", "ctx", ctx, "http_request", r)
 		return
 	}
 	if r.URL.Path != "/paste/" {
 		http.Error(rw, "not found", http.StatusNotFound)
-		log.V(1).Info("invalid path", "path", r.URL.Path)
+		log.V(1).Info("invalid path", "ctx", ctx, "http_request", r)
 		return
 	}
 
@@ -145,13 +145,13 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 		err := r.ParseMultipartForm(1 << 22) // 4M
 		if err != nil {
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
-			log.Error(err, "parse multipart form")
+			log.Error(err, "parse multipart form", "ctx", ctx, "http_request", r)
 			return
 		}
 		mpf, _, err := r.FormFile("upload")
 		if err != nil {
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
-			log.Error(err, "get form file")
+			log.Error(err, "get form file", "ctx", ctx, "http_request", r)
 			return
 		}
 		defer mpf.Close()
@@ -159,14 +159,14 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 		_, err = io.Copy(&buf, mpf)
 		if err != nil {
 			http.Error(rw, "read", http.StatusInternalServerError)
-			log.Error(err, "read form file")
+			log.Error(err, "read form file", "ctx", ctx, "http_request", r)
 			return
 		}
 		val = buf.Bytes()
 		uploadSource = "file"
 	default:
 		http.Error(rw, "unknown content type", http.StatusBadRequest)
-		log.Error(errors.New("unhandled content type"), "unknown upload", "content_type", ct)
+		log.Error(errors.New("unhandled content type"), "unknown upload", "content_type", ct, "ctx", ctx, "http_request", r)
 		return
 	}
 
@@ -186,9 +186,9 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 	_, err := io.Copy(ow, bytes.NewReader(val))
 	if err != nil {
 		http.Error(rw, "write", http.StatusInternalServerError)
-		log.Error(err, "upload object")
+		log.Error(err, "upload object", "ctx", ctx, "http_request", r)
 	}
 
 	fmt.Fprintf(rw, "https://%s/%s\n", r.Host, key)
-	log.V(1).Info("uploaded object")
+	log.V(1).Info("uploaded object", "ctx", ctx, "http_request", r)
 }
