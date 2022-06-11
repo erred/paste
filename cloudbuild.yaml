@@ -1,17 +1,21 @@
 steps:
   - id: build-push
-    name: 'gcr.io/kaniko-project/executor'
+    name: 'us-central1-docker.pkg.dev/com-seankhliao/build/gotip'
+    waitFor: ['-']
+    entrypoint: 'sh'
+    env:
+      - 'CGO_ENABLED=0'
+      - 'GOFLAGS=-trimpath'
+      - 'KO_DOCKER_REPO=${_REGISTRY}'
+      - 'GGCR_EXPERIMENT_ESTARGZ=1'
     args:
-      - '--cache'
-      - '--cache-ttl=168h'
-      - '--context=.'
-      - '--destination=${_REGISTRY}/${_APP}:${SHORT_SHA}'
-      - '--destination=${_REGISTRY}/${_APP}:latest'
-      - '--image-name-with-digest-file=.image.txt'
-      - '--reproducible'
-      - '--single-snapshot'
-      - '--use-new-run'
-      - '--ignore-var-run'
+      - '-c'
+      - |
+        set -ex \
+        && go test -vet=all ./... \
+        && staticcheck ./... \
+        && ko build -B --platform=linux/amd64 --image-refs=.image.txt . \
+        && chmod +r .image.txt
 
   - id: sign
     name: 'gcr.io/projectsigstore/cosign'
@@ -33,6 +37,5 @@ steps:
       - 'gcloud run deploy ${_RUN} --image $(head -n 1 .image.txt) --region us-central1 --max-instances 1'
 
 substitutions:
-  _APP: 'paste'
   _REGISTRY: 'us-central1-docker.pkg.dev/com-seankhliao/run'
   _RUN: 'paste-liao-dev'
