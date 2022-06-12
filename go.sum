@@ -61,8 +61,6 @@ cloud.google.com/go/trace v1.2.0/go.mod h1:Wc8y/uYyOhPy12KEnXG9XGrvfMz5F5SrYecQl
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/GoogleCloudPlatform/opentelemetry-operations-go v0.32.1 h1:4nBGFTIBNXqUep3SxJiPn3Wnn95BYVpS2wnggeofsV0=
-github.com/GoogleCloudPlatform/opentelemetry-operations-go v0.32.1/go.mod h1:M2LNJDLE5udg/GF+81jWPJ5L2qkzo5KO/IWahxofRWU=
 github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.8.1 h1:Tn/3pMqRSsI09jFVdGEuMqLIBNOmRHVqKp9DSQg4HPM=
 github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.8.1/go.mod h1:KddM1vG3MS+CRfmoFBqeUIICfd9nS8pLHKtwJ/kt0QQ=
 github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.32.1 h1:SixyMKTOWhEWISdA7PB7vOxkvOP8BIgW5uzbyIf0kXM=
@@ -242,6 +240,8 @@ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.32.0 h1:mac9BKR
 go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.32.0/go.mod h1:5eCOqeGphOyz6TsY3ZDNjE33SM/TFAK3RGuCL2naTgY=
 go.opentelemetry.io/otel v1.7.0 h1:Z2lA3Tdch0iDcrhJXDIlC94XE+bxok1F9B+4Lz/lGsM=
 go.opentelemetry.io/otel v1.7.0/go.mod h1:5BdUoMIz5WEs0vt0CUEMtSSaTSHBBVwrhnz7+nrD5xk=
+go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.7.0 h1:8hPcgCg0rUJiKE6VWahRvjgLUrNl7rW2hffUEPKXVEM=
+go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.7.0/go.mod h1:K4GDXPY6TjUiwbOh+DkKaEdCF8y+lvMoM6SeAPyfCCM=
 go.opentelemetry.io/otel/metric v0.30.0 h1:Hs8eQZ8aQgs0U49diZoaS6Uaxw3+bBE3lcMUKBFIk3c=
 go.opentelemetry.io/otel/metric v0.30.0/go.mod h1:/ShZ7+TS4dHzDFmfi1kSXMhMVubNoP0oIaBp70J6UXU=
 go.opentelemetry.io/otel/sdk v1.7.0 h1:4OmStpcKVOfvDOgCt7UriAPtKolwIhxpnSNI/yK+1B0=
@@ -251,8 +251,8 @@ go.opentelemetry.io/otel/trace v1.7.0/go.mod h1:fzLSB9nqR2eXzxPXb2JW9IKE+ScyXA48
 go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
 go.seankhliao.com/gchat v0.0.0-20220612154931-8f1077ccd269 h1:h9gJquY9YFRVXKCLXSyJu8pgYSN2AbDjrBu9CEjBol8=
 go.seankhliao.com/gchat v0.0.0-20220612154931-8f1077ccd269/go.mod h1:wtQXcAF9rzTjUwuqHC1R/B+ytI+W8ztkeaKmSUxu/wE=
-go.seankhliao.com/svcrunner v0.2.4 h1:S0Zd2LSMC+jN3Q94sopLKgcCjB6shb4SQ4+ZOZfLwaE=
-go.seankhliao.com/svcrunner v0.2.4/go.mod h1:FMwi7w70hByQpJFTEdOHlC42KJV4oTVrqw9emd2rJKI=
+go.seankhliao.com/svcrunner v0.2.6 h1:dWtm9zdycYuPyqziGfBKuJeBLmPrnCRyElkhpeURToc=
+go.seankhliao.com/svcrunner v0.2.6/go.mod h1:yXxleNWNw1RhaPCSjm0/n94a/Eh6ah/Z2MRN4vO7eCY=
 go.seankhliao.com/webstyle v0.5.0 h1:/0kH4xPiHEqNcgL4YvKYAi2P9rdziReLK4bn9Ea5kbo=
 go.seankhliao.com/webstyle v0.5.0/go.mod h1:w6xuDEA1PA+MNe5ePY6PuFVuZJqTCM8q6rS/KYHQgks=
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
