@@ -18,6 +18,7 @@ autofocus
 placeholder="paste something here..."
 rows="10"
 cols="40"
+
 > </textarea>
 
 <form
