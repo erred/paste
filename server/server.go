@@ -134,14 +134,9 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var val []byte
-	var uploadSource string
-	ct := r.Header.Get("content-type")
-	switch {
-	case strings.HasPrefix(ct, "application/x-www-form-urlencoded"):
-		val = []byte(r.FormValue("paste"))
-		uploadSource = "form"
-	case strings.HasPrefix(ct, "multipart/form-data"):
+	val := []byte(strings.TrimSpace(r.FormValue("paste")))
+	uploadSource := "form"
+	if Len(val) == 0 {
 		err := r.ParseMultipartForm(1 << 22) // 4M
 		if err != nil {
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
@@ -164,9 +159,10 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 		}
 		val = buf.Bytes()
 		uploadSource = "file"
-	default:
-		http.Error(rw, "unknown content type", http.StatusBadRequest)
-		log.Error(errors.New("unhandled content type"), "unknown upload", "content_type", ct, "ctx", ctx, "http_request", r)
+	}
+	if len(val) == 0 {
+		http.Error(rw, "no content", http.StatusBadRequest)
+		log.Error(errors.New("no content"), "unknown upload", "ctx", ctx, "http_request", r)
 		return
 	}
 
