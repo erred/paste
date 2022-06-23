@@ -136,7 +136,7 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 
 	val := []byte(strings.TrimSpace(r.FormValue("paste")))
 	uploadSource := "form"
-	if Len(val) == 0 {
+	if len(val) == 0 {
 		err := r.ParseMultipartForm(1 << 22) // 4M
 		if err != nil {
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
