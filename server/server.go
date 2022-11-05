@@ -77,6 +77,11 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		http.Redirect(rw, r, "/", http.StatusFound)
 		return
 	}
+
+	if strings.HasPrefix(r.UserAgent(), "curl/") {
+		fmt.Fprintln(rw, `curl "https://paste.liao.dev/paste/" -F "upload=@file.txt"`)
+		return
+	}
 	http.ServeContent(rw, r, "index.html", time.Unix(0, 0), bytes.NewReader(s.index))
 }
 
