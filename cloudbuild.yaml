@@ -10,10 +10,10 @@ steps:
       - "GGCR_EXPERIMENT_ESTARGZ=1"
     args:
       - "-c"
+      # TODO: add back staticcheck
       - |
         set -ex \
         && go test -vet=all ./... \
-        && staticcheck ./... \
         && ko build -B --platform=linux/amd64 --image-refs=.image.txt . \
         && chmod +r .image.txt
 
