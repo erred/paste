@@ -3,12 +3,12 @@ package server
 import (
 	"bytes"
 	"context"
-	"crypto/sha256"
 	_ "embed"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
+	"mime"
 	"net/http"
 	"path"
 	"strings"
@@ -136,6 +136,13 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 
 	val := []byte(strings.TrimSpace(r.FormValue("paste")))
 	uploadSource := "form"
+	var ext string
+	if len(val) > 0 {
+		exts, _ := mime.ExtensionsByType(http.DetectContentType(val))
+		if len(exts) > 0 {
+			ext = exts[0]
+		}
+	}
 	if len(val) == 0 {
 		err := r.ParseMultipartForm(1 << 22) // 4M
 		if err != nil {
@@ -143,13 +150,19 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 			log.Error(err, "parse multipart form", "ctx", ctx, "http_request", r)
 			return
 		}
-		mpf, _, err := r.FormFile("upload")
+		mpf, mph, err := r.FormFile("upload")
 		if err != nil {
 			http.Error(rw, "bad multipart form", http.StatusBadRequest)
 			log.Error(err, "get form file", "ctx", ctx, "http_request", r)
 			return
 		}
 		defer mpf.Close()
+
+		_, e, ok := strings.Cut(mph.Filename, ".")
+		if ok {
+			ext = "." + e
+		}
+
 		var buf bytes.Buffer
 		_, err = io.Copy(&buf, mpf)
 		if err != nil {
@@ -165,10 +178,13 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 		log.Error(errors.New("no content"), "unknown upload", "ctx", ctx, "http_request", r)
 		return
 	}
+	if ext == "" {
+		ext = ".txt"
+	}
 
-	sum := sha256.Sum256(val)
-	sum2 := base64.URLEncoding.EncodeToString(sum[:])
-	key := path.Join("p", sum2[:8])
+	name := randName() + ext
+
+	key := path.Join("p", name)
 
 	log = log.WithValues("source", uploadSource, "size", len(val), "key", key)
 
@@ -187,4 +203,8 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(rw, "https://%s/%s\n", r.Host, key)
 	log.V(1).Info("uploaded object", "ctx", ctx, "http_request", r)
+}
+
+func randName() string {
+	return colorList[rand.Intn(len(colorList))] + "-" + cityList[rand.Intn(len(cityList))]
 }
