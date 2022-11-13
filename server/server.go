@@ -140,6 +140,7 @@ func (s *Server) upload(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	val := []byte(strings.TrimSpace(r.FormValue("paste")))
+	val = bytes.ReplaceAll(val, []byte("\r\n"), []byte("\n")) // WHATWG says textarea uses CRLF
 	uploadSource := "form"
 	var ext string
 	if len(val) > 0 {
