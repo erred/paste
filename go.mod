@@ -5,9 +5,9 @@ go 1.19
 require (
 	cloud.google.com/go/storage v1.28.0
 	github.com/go-logr/logr v1.2.3
-	go.opentelemetry.io/otel v1.11.1
+	go.opentelemetry.io/otel v1.11.2-0.20221123155348-1f5e6adbf2ca
 	go.opentelemetry.io/otel/trace v1.11.1
-	go.seankhliao.com/svcrunner v0.3.0
+	go.seankhliao.com/svcrunner v0.3.1
 	go.seankhliao.com/webstyle v0.5.4
 )
 
@@ -34,9 +34,9 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.11.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.36.4 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.11.1 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.11.1 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.11.1 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.11.2-0.20221123155348-1f5e6adbf2ca // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.11.2-0.20221123155348-1f5e6adbf2ca // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.11.2-0.20221123155348-1f5e6adbf2ca // indirect
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.11.1 // indirect
 	go.opentelemetry.io/otel/metric v0.33.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.11.1 // indirect
