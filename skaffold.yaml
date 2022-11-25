@@ -1,0 +1,47 @@
+apiVersion: skaffold/v3
+kind: Config
+metadata:
+  name: paste
+build:
+  artifacts:
+    - image: us-central1-docker.pkg.dev/com-seankhliao/run/paste
+      
+      # automated signing needs s ervice account
+      # hooks:
+      #   after:
+      #     - command:
+      #         - sh
+      #         - -c
+      #         - |
+      #           COSIGN_EXPERIMENTAL=1 cosign sign --force --no-tlog-upload=false "${SKAFFOLD_IMAGE}"
+      ko:
+        env:
+          - CGO_ENABLED=0
+        flags:
+          - -trimpath
+        ldflags:
+          - -s
+          - -w
+        dependencies:
+          paths:
+            - "**/*.go"
+            - "server/**/*"
+            - "kodata/**/*"
+            - "go.mod"
+
+  tagPolicy:
+    inputDigest: {}
+      
+  platforms:
+    - linux/amd64
+
+  local:
+    concurrency: 0
+
+manifests:
+  rawYaml:
+    - deploy/cloudrun/service.yaml
+  
+deploy:
+  cloudrun:
+    region: us-central1

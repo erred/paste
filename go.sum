@@ -251,8 +251,10 @@ go.opentelemetry.io/proto/otlp v0.19.0 h1:IVN6GR+mhC4s5yfcTbmzHYODqvWAp3ZedA2SJP
 go.opentelemetry.io/proto/otlp v0.19.0/go.mod h1:H7XAot3MsfNsj7EXtrA2q5xSNQ10UqI405h3+duxN4U=
 go.seankhliao.com/gchat v0.0.0-20220612154931-8f1077ccd269 h1:h9gJquY9YFRVXKCLXSyJu8pgYSN2AbDjrBu9CEjBol8=
 go.seankhliao.com/gchat v0.0.0-20220612154931-8f1077ccd269/go.mod h1:wtQXcAF9rzTjUwuqHC1R/B+ytI+W8ztkeaKmSUxu/wE=
-go.seankhliao.com/svcrunner v0.4.4 h1:/4Pgk7tJSZ6fnLBawPSPGJB+H5Y4dXhvOz3nlfscl/A=
-go.seankhliao.com/svcrunner v0.4.4/go.mod h1:awvQ/vs2Ats1eGezq+Cfu8q8Jp82ZxehsJ+r8Om6HWg=
+go.seankhliao.com/svcrunner v0.4.7-0.20221125132406-e8feb414b387 h1:S4W4pdOcdY9EmCfmAKFmljtfshtpMTqKIr2YIwY6oDY=
+go.seankhliao.com/svcrunner v0.4.7-0.20221125132406-e8feb414b387/go.mod h1:awvQ/vs2Ats1eGezq+Cfu8q8Jp82ZxehsJ+r8Om6HWg=
+go.seankhliao.com/svcrunner v0.4.7 h1:5f3xbI79f28TdcqpueG1HOpZBVsjNOEBU9z2QsCZYLk=
+go.seankhliao.com/svcrunner v0.4.7/go.mod h1:awvQ/vs2Ats1eGezq+Cfu8q8Jp82ZxehsJ+r8Om6HWg=
 go.seankhliao.com/webstyle v0.5.4 h1:eJEwihwfRPYg199GRH/aasV1mdJ6v1VvhFpKMvvI7z8=
 go.seankhliao.com/webstyle v0.5.4/go.mod h1:fAVOp1Q/m+ktKRIAmgZYtfX+oUU5uSgigQXaSiRgt5w=
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
