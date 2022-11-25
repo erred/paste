@@ -8,5 +8,5 @@ steps:
       - "-c"
       - |
         set -ex \
-        && go test -vet=all ./... \
+        && go test -vet=all ./... && \
         skaffold run
