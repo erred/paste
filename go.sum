@@ -255,6 +255,8 @@ go.seankhliao.com/svcrunner v0.4.7-0.20221125132406-e8feb414b387 h1:S4W4pdOcdY9E
 go.seankhliao.com/svcrunner v0.4.7-0.20221125132406-e8feb414b387/go.mod h1:awvQ/vs2Ats1eGezq+Cfu8q8Jp82ZxehsJ+r8Om6HWg=
 go.seankhliao.com/svcrunner v0.4.7 h1:5f3xbI79f28TdcqpueG1HOpZBVsjNOEBU9z2QsCZYLk=
 go.seankhliao.com/svcrunner v0.4.7/go.mod h1:awvQ/vs2Ats1eGezq+Cfu8q8Jp82ZxehsJ+r8Om6HWg=
+go.seankhliao.com/svcrunner v0.4.8 h1:sCs2SdxSh8pUUORaLWciexhBCHWCEfOye2CaXhyYsSA=
+go.seankhliao.com/svcrunner v0.4.8/go.mod h1:awvQ/vs2Ats1eGezq+Cfu8q8Jp82ZxehsJ+r8Om6HWg=
 go.seankhliao.com/webstyle v0.5.4 h1:eJEwihwfRPYg199GRH/aasV1mdJ6v1VvhFpKMvvI7z8=
 go.seankhliao.com/webstyle v0.5.4/go.mod h1:fAVOp1Q/m+ktKRIAmgZYtfX+oUU5uSgigQXaSiRgt5w=
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
