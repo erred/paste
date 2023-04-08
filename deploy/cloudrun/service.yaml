@@ -22,9 +22,9 @@ spec:
         - name: LOG_FORMAT
           value: json+gcp
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: aeolian.liao.dev:4317
+          value: lucid.liao.dev:4317
         - name: OTLP_AUDIENCE
-          value: https://aeolian.liao.dev
+          value: https://lucid.liao.dev
         - name: PASTE_BUCKET
           value: paste-liao-dev
         - name: LOG_ERRORS_GCHAT
