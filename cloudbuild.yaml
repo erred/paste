@@ -1,12 +1,13 @@
 steps:
   - id: build-push-deploy
-    name: "us-central1-docker.pkg.dev/com-seankhliao/build/gotip"
+    name: 'ghcr.io/seankhliao/go:tip'
     entrypoint: "sh"
     env:
       - "GGCR_EXPERIMENT_ESTARGZ=1"
     args:
       - "-c"
       - |
-        set -ex \
-        && go test -vet=all ./... && \
+        set -ex && \
+        go test -vet=all ./... && \
+        staticcheck ./... && \
         skaffold run
