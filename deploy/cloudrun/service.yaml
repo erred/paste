@@ -27,11 +27,6 @@ spec:
           value: https://lucid.liao.dev
         - name: PASTE_BUCKET
           value: paste-liao-dev
-        - name: LOG_ERRORS_GCHAT
-          valueFrom:
-            secretKeyRef:
-              key: latest
-              name: paste-errors-gchat
         image: us-central1-docker.pkg.dev/com-seankhliao/run/paste
         ports:
         - containerPort: 8080
