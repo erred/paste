@@ -1,0 +1,13 @@
+steps:
+  - label: "build and test"
+    plugins:
+      - docker#v5.7.0:
+          platform: linux/arm64/v8
+          image: "golang:alpine"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -ex
+              go build ./...
+              go test -vet=all ./...

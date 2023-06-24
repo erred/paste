@@ -1,6 +1,6 @@
 steps:
   - id: build-push-deploy
-    name: 'ghcr.io/seankhliao/go:tip'
+    name: "ghcr.io/seankhliao/go:tip"
     entrypoint: "sh"
     env:
       - "GGCR_EXPERIMENT_ESTARGZ=1"
