@@ -3,7 +3,7 @@ steps:
     plugins:
       - docker#v5.7.0:
           platform: linux/arm64/v8
-          image: "golang:alpine"
+          image: "ghcr.io/seankhliao/go:tip-arm64"
           command:
             - /bin/sh
             - -c
