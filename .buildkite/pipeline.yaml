@@ -7,7 +7,7 @@ steps:
           command:
             - /bin/sh
             - -c
-            - |
-              set -ex
-              go build ./...
+            - >-
+              set -ex;
+              go build ./... &&
               go test -vet=all ./...
